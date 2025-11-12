@@ -12,7 +12,6 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {/* Removed footer */}
       <BottomNav />
     </div>
   )

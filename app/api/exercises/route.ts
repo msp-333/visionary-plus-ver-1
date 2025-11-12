@@ -161,7 +161,7 @@ const exercises: Exercise[] = [
     mode: 'interval',
     intervals: [
       { label: 'Roll clockwise', seconds: 30 },
-      { label: 'Roll counter‑clockwise', seconds: 30 },
+      { label: 'Roll counter-clockwise', seconds: 30 },
       { label: 'Up & Down', seconds: 20 },
       { label: 'Left & Right', seconds: 20 },
       { label: 'Diagonals', seconds: 20 }
@@ -186,6 +186,111 @@ const exercises: Exercise[] = [
     ],
     mode: 'reps',
     reps: 20
+  },
+
+  // --- Your new additions ---
+
+  {
+    id: 'near-point-play',
+    title: 'Near-Point Play',
+    category: 'Focus',
+    level: 'Beginner',
+    duration: 2,
+    description:
+      'Do a light, near task (word puzzle, coloring, connect-the-dots) preferably without reading glasses.',
+    steps: [
+      'Pick a simple word puzzle, coloring page, or connect-the-dots with large print.',
+      'If possible, do it without reading glasses.',
+      'Keep it playful and relaxed—no need for speed.'
+    ],
+    benefits: [
+      'Gentle near-focus engagement for presbyopia support',
+      'Encourages relaxed, sustained accommodation without strain'
+    ],
+    mode: 'timer',
+    timerSeconds: 120
+  },
+  {
+    id: 'convergence-practice',
+    title: 'Convergence Practice (Two Dots)',
+    category: 'Convergence',
+    level: 'Beginner',
+    duration: 2,
+    description:
+      'Use two dots (on a presbyopia chart or a page) and gently cross your eyes until you see three.',
+    steps: [
+      'Use a presbyopia chart with two dots (or draw two dots on a page).',
+      'Gently cross your eyes until the two dots appear as three.',
+      'Hold briefly, then relax your gaze.',
+      'Repeat a few times, maintaining comfort.'
+    ],
+    benefits: [
+      'Trains near convergence and eye teaming',
+      'Can improve comfort for reading and close work'
+    ],
+    mode: 'timer',
+    timerSeconds: 120
+  },
+  {
+    id: 'black-dot-memory',
+    title: 'Black Dot Memory',
+    category: 'Relaxation',
+    level: 'Beginner',
+    duration: 1,
+    description:
+      'Visualization drill: look at a small black dot, then imagine it vividly when eyes are closed.',
+    steps: [
+      'Draw a small black dot on white paper and look at it gently.',
+      'Close your eyes and imagine the dot as very black on a white background.',
+      'Let the dot “move” slightly in your mind—avoid any strain.'
+    ],
+    benefits: [
+      'Promotes relaxed central fixation and mental imagery',
+      'Helps reduce visual tension'
+    ],
+    mode: 'timer',
+    timerSeconds: 60
+  },
+  {
+    id: 'zooming',
+    title: 'Zooming',
+    category: 'Focus',
+    level: 'Beginner',
+    duration: 2,
+    description:
+      'Alternate focus between your thumb and a far object to exercise accommodation flexibility.',
+    steps: [
+      'Hold your thumb ~15 cm (6 in) from your nose and focus on it.',
+      'Slowly extend your arm, keeping focus on the thumb.',
+      'Shift focus to a distant object for 2–3 seconds, then return to the thumb.',
+      'Repeat for the duration.'
+    ],
+    benefits: [
+      'Strengthens the focusing system (accommodation)',
+      'Improves speed and comfort when switching focus near ↔ far'
+    ],
+    mode: 'timer',
+    timerSeconds: 120
+  },
+  {
+    id: 'diagonal-shifts',
+    title: 'Diagonal Shifts',
+    category: 'Mobility',
+    level: 'Beginner',
+    duration: 1,
+    description:
+      'Move your gaze along diagonals without moving your head to broaden comfortable range of motion.',
+    steps: [
+      'Without moving your head, move your gaze: up-left → down-right → up-right → down-left.',
+      'Hold each for ~1 second, then return to center.',
+      'Repeat 2–3 cycles with smooth, comfortable movements.'
+    ],
+    benefits: [
+      'Expands ocular movement range on diagonals',
+      'Can reduce stiffness and improve tracking'
+    ],
+    mode: 'timer',
+    timerSeconds: 60
   }
 ]
 
@@ -220,7 +325,8 @@ export async function GET(req: Request) {
     out = out.filter(x =>
       x.title.toLowerCase().includes(s) ||
       x.description.toLowerCase().includes(s) ||
-      x.steps.some(st => st.toLowerCase().includes(s))
+      x.steps.some(st => st.toLowerCase().includes(s)) ||
+      x.benefits.some(b => b.toLowerCase().includes(s))
     )
   }
   if (category) {
