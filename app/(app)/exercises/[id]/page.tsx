@@ -1,6 +1,5 @@
-// app/(app)/exercises/[id]/page.tsx
 import { notFound } from "next/navigation";
-import { exercises } from "@/app/api/exercises/route";
+import { exercises } from "@/lib/exercises";
 import ExerciseDetailClient from "../ExerciseDetailClient";
 
 export const dynamic = "force-static";
@@ -16,7 +15,7 @@ export default async function Page({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params; // 👈 v15: params can be a Promise
+  const { id } = await params; // Next 15: params can be a Promise
   const ex = exercises.find((e) => e.id === id);
   if (!ex) notFound();
   return <ExerciseDetailClient ex={ex} />;
