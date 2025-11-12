@@ -1,8 +1,14 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/api/exercises/route": "app/api/exercises/route.js",
+  "/api/auth/signup/route": "app/api/auth/signup/route.js",
+  "/page": "app/page.js",
   "/(app)/dashboard/page": "app/(app)/dashboard/page.js",
-  "/(app)/exercises/page": "app/(app)/exercises/page.js",
   "/(app)/exercises/[id]/page": "app/(app)/exercises/[id]/page.js",
+  "/(app)/exercises/page": "app/(app)/exercises/page.js",
+  "/(app)/sleep/page": "app/(app)/sleep/page.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js",
   "/(app)/tests/page": "app/(app)/tests/page.js",
-  "/(app)/sleep/page": "app/(app)/sleep/page.js"
+  "/(auth)/signup/page": "app/(auth)/signup/page.js",
+  "/(auth)/onboarding/page": "app/(auth)/onboarding/page.js"
 }

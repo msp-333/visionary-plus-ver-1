@@ -1,4 +1,4 @@
-// File: C:\Users\Lara Sy\Downloads\visionary plus ver 1\app\(auth)\login\page.tsx
+// File: /workspaces/visionary-plus-ver-1/app/(auth)/login/page.tsx
 import * as entry from '../../../../../app/(auth)/login/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

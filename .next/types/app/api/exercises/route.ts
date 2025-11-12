@@ -1,4 +1,4 @@
-// File: C:\Users\Lara Sy\Downloads\visionary plus ver 1\app\api\exercises\route.ts
+// File: /workspaces/visionary-plus-ver-1/app/api/exercises/route.ts
 import * as entry from '../../../../../app/api/exercises/route.js'
 import type { NextRequest } from 'next/server.js'
 
