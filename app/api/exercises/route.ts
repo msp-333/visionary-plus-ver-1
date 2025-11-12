@@ -311,3 +311,5 @@ export async function GET() {
   // Filter on the client after fetching this full list.
   return Response.json(exercises);
 }
+
+export { exercises };
