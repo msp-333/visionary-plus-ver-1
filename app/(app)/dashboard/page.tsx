@@ -1,14 +1,22 @@
 import DashboardPage from "@/components/DashboardPage";
 
-export default function Page({
+// In Next 15, `searchParams` may be a Promise when PPR is enabled.
+// Type it to accept either a value or a Promise.
+type SearchParams =
+  | Record<string, string | string[]>
+  | Promise<Record<string, string | string[]>>;
+
+export default async function Page({
   searchParams,
 }: {
-  searchParams?: { user?: string | string[] };
+  searchParams?: SearchParams;
 }) {
-  const userName =
-    typeof searchParams?.user === "string" ? searchParams.user : "User";
+  const sp = searchParams ? await searchParams : undefined;
 
-  // No custom hooks passed through the server boundary; the client component
-  // will use its default shims unless you inject hooks in tests.
+  const userName =
+    typeof (sp as Record<string, string | string[] | undefined>)?.user === "string"
+      ? (sp as Record<string, string>)!.user
+      : "User";
+
   return <DashboardPage userName={userName} />;
 }

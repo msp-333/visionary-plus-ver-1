@@ -304,7 +304,7 @@ function RecentActivity({
 }) {
   return (
     <section
-      className={`${UI.card} p-4 ${fullHeight ? "h-full min-h[340px] flex flex-col" : ""}`}
+      className={`${UI.card} p-4 ${fullHeight ? "h-full min-h-[340px] flex flex-col" : ""}`}
       aria-labelledby="recent-title"
     >
       <h2
