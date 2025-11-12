@@ -5,6 +5,8 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import Logo from '@/components/Logo'
+import { supabase } from '@/lib/supabaseClient'
+import { useRouter } from 'next/navigation'
 
 const Schema = z.object({
   email: z.string().email(),
@@ -13,11 +15,40 @@ const Schema = z.object({
 type Values = z.infer<typeof Schema>
 
 export default function Login() {
+  const router = useRouter()
   const { register, handleSubmit, formState: { errors } } = useForm<Values>({
     resolver: zodResolver(Schema)
   })
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+
+  async function onSubmit(values: Values) {
+    setPending(true)
+    setError(null)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password
+    })
+    setPending(false)
+
+    if (error) {
+      setError(error.message || 'Failed to sign in')
+      return
+    }
+
+    // Success — go to your app’s home/dashboard
+    router.replace('/dashboard') // or: window.location.href = '/dashboard'
+  }
+
+  async function loginWithGithub() {
+    setError(null)
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: { redirectTo: `${location.origin}/dashboard` } // or location.origin
+    })
+    if (error) setError(error.message)
+    // Redirect happens via OAuth; no need to set pending here
+  }
 
   return (
     // Dark page background
@@ -35,25 +66,7 @@ export default function Login() {
           Sign in to continue
         </p>
 
-        <form
-          onSubmit={handleSubmit(async (values) => {
-            setPending(true)
-            setError(null)
-            const res = await fetch('/api/auth/login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(values)
-            })
-            setPending(false)
-            if (res.ok) {
-              window.location.href = '/dashboard'
-            } else {
-              const data = await res.json().catch(() => ({}))
-              setError(data.message ?? 'Failed to sign in')
-            }
-          })}
-          className="mt-6 space-y-4"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
           <div>
             <input
               type="email"
@@ -88,6 +101,14 @@ export default function Login() {
             className="w-full rounded-xl bg-v-ceil px-5 py-3 font-manrope font-semibold text-white shadow-soft transition hover:opacity-90 disabled:opacity-70"
           >
             {pending ? 'Signing in…' : 'Sign In'}
+          </button>
+
+          <button
+            type="button"
+            onClick={loginWithGithub}
+            className="w-full rounded-xl border border-v-dark/10 bg-white px-5 py-3 font-manrope font-semibold text-v-dark shadow-soft transition hover:bg-v-dark/5"
+          >
+            Continue with GitHub
           </button>
 
           <div className="mt-2 text-center">
