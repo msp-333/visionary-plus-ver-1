@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState, useEffect, useRef } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { BRAND, TestResult } from '../../app/(app)/tests/types'
 
 /**
@@ -100,9 +100,9 @@ export function AmslerGrid({ onResult }: { onResult: (r: Omit<TestResult, 'times
   const toggle = (i: number, j: number) => {
     const k = `${i},${j}`
     setFlags((f) => {
-      const n = new Set(f)
-      n.has(k) ? n.delete(k) : n.add(k)
-      return n
+      const nextFlags = new Set(f)
+      nextFlags.has(k) ? nextFlags.delete(k) : nextFlags.add(k)
+      return nextFlags
     })
   }
 
@@ -270,7 +270,7 @@ export function ColorArrangement({ onResult }: { onResult: (r: Omit<TestResult, 
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <p className="text-sm text-slate-300">Drag the caps to form the smoothest hue gradient. Result is a roughness score for self‑tracking (lower is better).</p>
+      <p className="text-sm text-slate-300">Drag the caps to form the smoothest hue gradient. Result is a roughness score for self-tracking (lower is better).</p>
       <div className="mt-4 grid grid-cols-8 gap-2 sm:grid-cols-12">
         {caps.map((c, i) => (
           <div
@@ -386,7 +386,7 @@ export function NPC({ onResult }: { onResult: (r: Omit<TestResult, 'timestamp' |
   const save = () => Number.isFinite(worst) && onResult({ id: 'npc', value: `${worst}`, unit: 'cm (worst of 3)', label: 'NPC' })
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <p className="text-sm text-slate-300">Move a small target slowly toward your nose until it doubles or blurs. Measure nose‑to‑target (cm). Repeat 3×; record the <em>worst</em> value.</p>
+      <p className="text-sm text-slate-300">Move a small target slowly toward your nose until it doubles or blurs. Measure nose-to-target (cm). Repeat 3×; record the <em>worst</em> value.</p>
       <div className="mt-3 grid max-w-md grid-cols-3 gap-2 text-sm">
         {t.map((v, i) => (
           <input key={i} className="rounded-md border border-white/10 bg-white/5 p-2 text-sm" type="number" min={1} step={0.5} placeholder={`Trial ${i + 1} (cm)`} value={v} onChange={(e) => setT(swapAt(t, i, numOrEmpty(e.target.value)))} />
@@ -472,7 +472,7 @@ export function EyeDominance({ onResult }: { onResult: (r: Omit<TestResult, 'tim
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
       <p className="text-sm text-slate-300">
-        Extend arms, make a small triangular aperture with your hands, and center the on‑screen ✦ star.
+        Extend arms, make a small triangular aperture with your hands, and center the on-screen ✦ star.
         Close one eye at a time — which eye keeps the star centered? That’s your dominant eye.
       </p>
       <div className="my-5 flex items-center justify-center">
@@ -489,14 +489,14 @@ export function EyeDominance({ onResult }: { onResult: (r: Omit<TestResult, 'tim
   )
 }
 
-/* ---------------------------- 11) Worth 4‑Dot ------------------------------ */
+/* ---------------------------- 11) Worth 4-Dot ------------------------------ */
 
 export function Worth4Dot({ onResult }: { onResult: (r: Omit<TestResult, 'timestamp' | 'eye' | 'category' | 'distanceCm'>) => void }) {
   const [seen, setSeen] = useState<'2 red' | '3 green' | '4 mixed' | '5 double' | ''>('')
-  const save = () => seen && onResult({ id: 'worth-4-dot', value: seen, label: 'Worth 4‑Dot' })
+  const save = () => seen && onResult({ id: 'worth-4-dot', value: seen, label: 'Worth 4-Dot' })
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <p className="text-sm text-slate-300">With red‑green glasses on, report how many dots and which colors you see.</p>
+      <p className="text-sm text-slate-300">With red-green glasses on, report how many dots and which colors you see.</p>
       <div className="my-4 flex items-center justify-center">
         <div className="grid grid-cols-2 gap-6">
           <Dot color="#ff2a2a" />
@@ -563,7 +563,7 @@ export function Stereopsis({
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <p className="text-sm text-slate-300">Wear red‑cyan glasses (red left). Identify which circle appears “in front”. Levels decrease disparity (arcsec).</p>
+      <p className="text-sm text-slate-300">Wear red-cyan glasses (red left). Identify which circle appears “in front”. Levels decrease disparity (arcsec).</p>
       {!pxPerMM ? (
         <div className="mt-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-2 text-xs text-amber-200">
           Calibrate first for disparity accuracy.
@@ -627,14 +627,16 @@ export function VisualField({ onResult }: { onResult: (r: Omit<TestResult, 'time
   const [current, setCurrent] = useState(0)
 
   useEffect(() => {
-    let to: number | undefined
+    let to: ReturnType<typeof setTimeout> | undefined
     if (running) {
-      to = window.setTimeout(() => {
+      to = setTimeout(() => {
         setCurrent((c) => (c + 1) % total)
         setTrial((t) => t + 1)
       }, 900)
     }
-    return () => clearTimeout(to)
+    return () => {
+      if (to !== undefined) clearTimeout(to)
+    }
   }, [running, trial, total])
 
   const press = () => {
@@ -727,7 +729,7 @@ export function OSDI({ onResult }: { onResult: (r: Omit<TestResult, 'timestamp' 
     'Areas that are air conditioned?',
   ]
   const answered = Object.values(scores).filter((v) => v !== '').length
-  const sum = Object.values(scores).reduce((a, b) => (typeof b === 'number' ? a + b : a), 0)
+  const sum = Object.values(scores).reduce<number>((acc, v) => acc + (typeof v === 'number' ? v : 0), 0)
   const osdi = answered ? (sum * 25) / answered : 0
   const save = () => onResult({ id: 'osdi', value: osdi.toFixed(1), unit: '0–100', notes: `${answered}/12 answered`, label: 'OSDI' })
 
@@ -804,10 +806,10 @@ export function CVS({ onResult }: { onResult: (r: Omit<TestResult, 'timestamp' |
   const items = ['Dryness', 'Burning', 'Headache', 'Blur after screen', 'Double vision', 'Neck/shoulder pain', 'Light sensitivity']
   const [scores, setScores] = useState<number[]>(Array(items.length).fill(0))
   const total = scores.reduce((a, b) => a + b, 0)
-  const save = () => onResult({ id: 'cvs', value: String(total), unit: 'symptom score', notes: `20‑20‑20 adherence ${habit}/7 days`, label: 'CVS / 20‑20‑20' })
+  const save = () => onResult({ id: 'cvs', value: String(total), unit: 'symptom score', notes: `20-20-20 adherence ${habit}/7 days`, label: 'CVS / 20-20-20' })
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <p className="text-sm text-slate-300">Rate last‑week symptom frequency (0–4). Log how many days you did the 20‑20‑20 rule.</p>
+      <p className="text-sm text-slate-300">Rate last-week symptom frequency (0–4). Log how many days you did the 20-20-20 rule.</p>
       <div className="grid gap-2">
         {items.map((q, i) => (
           <div key={i} className="grid grid-cols-[1fr,9rem] items-center gap-2 border-t border-white/10 pt-2 text-sm">
@@ -818,7 +820,7 @@ export function CVS({ onResult }: { onResult: (r: Omit<TestResult, 'timestamp' |
           </div>
         ))}
         <div className="grid grid-cols-[1fr,9rem] items-center gap-2 border-t border-white/10 pt-2 text-sm">
-          <span>20‑20‑20 days (out of 7)</span>
+          <span>20-20-20 days (out of 7)</span>
           <input className="rounded-md border border-white/10 bg-white/5 p-2 text-sm" type="number" min={0} max={7} value={habit} onChange={(e) => setHabit(Number(e.target.value))} />
         </div>
       </div>
@@ -832,7 +834,7 @@ export function NightVision({ onResult }: { onResult: (r: Omit<TestResult, 'time
   const items = ['Halos around lights', 'Glare from headlights', 'Difficulty reading street signs', 'Washed out contrast', 'Need more light than others', 'Slower dark adaptation']
   const [scores, setScores] = useState<number[]>(Array(items.length).fill(0))
   const total = scores.reduce((a, b) => a + b, 0)
-  const save = () => onResult({ id: 'night-vision', value: String(total), unit: 'checklist score', label: 'Night/Low‑Light' })
+  const save = () => onResult({ id: 'night-vision', value: String(total), unit: 'checklist score', label: 'Night/Low-Light' })
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
       <p className="text-sm text-slate-300">Rate how often you notice each (0–4). Track the trend over time.</p>
@@ -865,14 +867,14 @@ export function PDRuler({
   const save = () => typeof pd === 'number' && onResult({ id: 'pd-ruler', value: String(pd), unit: 'mm', label: 'PD' })
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <p className="text-sm text-slate-300">Stand at a mirror. Hold a millimeter ruler under your eyes and measure center‑to‑center pupil distance. Or place a clear card against the screen ruler (calibrated).</p>
+      <p className="text-sm text-slate-300">Stand at a mirror. Hold a millimeter ruler under your eyes and measure center-to-center pupil distance. Or place a clear card against the screen ruler (calibrated).</p>
       {!pxPerMM ? (
         <div className="mt-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-2 text-xs text-amber-200">
-          Calibrate to show accurate on‑screen mm scale.
+          Calibrate to show accurate on-screen mm scale.
         </div>
       ) : null}
       <div className="my-3">
-        <div className="mb-2 text-xs text-slate-300">On‑screen mm scale</div>
+        <div className="mb-2 text-xs text-slate-300">On-screen mm scale</div>
         <div className="relative h-12 rounded-md border border-white/10 bg-white/5">
           {pxPerMM
             ? [...Array(151)].map((_, i) => (
