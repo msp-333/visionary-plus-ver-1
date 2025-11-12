@@ -1,22 +1,21 @@
 import DashboardPage from "@/components/DashboardPage";
 
-// In Next 15, `searchParams` may be a Promise when PPR is enabled.
-// Type it to accept either a value or a Promise.
-type SearchParams =
-  | Record<string, string | string[]>
-  | Promise<Record<string, string | string[]>>;
+// Next 15 may supply `searchParams` as a Promise (PPR).
+type SPromise = Promise<Record<string, string | string[]>>;
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: SearchParams;
+  // Match Next's constraint: Promise | undefined
+  searchParams?: SPromise;
 }) {
-  const sp = searchParams ? await searchParams : undefined;
+  // `await` works even if it's a plain object at runtime
+  const sp = (await searchParams) as
+    | Record<string, string | string[]>
+    | undefined;
 
   const userName =
-    typeof (sp as Record<string, string | string[] | undefined>)?.user === "string"
-      ? (sp as Record<string, string>)!.user
-      : "User";
+    typeof sp?.user === "string" ? sp.user : "User";
 
   return <DashboardPage userName={userName} />;
 }

@@ -241,7 +241,6 @@ function QuickLink({
       </div>
       <ChevronRight
         className="h-5 w-5 opacity-70 group-hover:translate-x-0.5 transition-transform"
-        aria-hidden="true"
       />
     </Link>
   );
